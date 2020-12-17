@@ -1,0 +1,21 @@
+body {
+    background-color: powderblue;
+}
+
+
+p {
+    color: red;
+}
+
+
+.list{
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+.W{
+  background: url('../W.jpeg') no-repeat left top;
+  height: 34px;
+  padding-top: 7px;
+  padding-left: 44px;
+}
