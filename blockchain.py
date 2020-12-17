@@ -5,10 +5,14 @@ from urllib.parse import urlparse
 from uuid import uuid4
 
 import requests
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 
 class Blockchain:
+
+    # Difficulty of PoW algo
+    difficulty = 4
+
     def __init__(self):
         self.current_transactions = []
         self.chain = []
@@ -112,6 +116,8 @@ class Blockchain:
             'transactions': self.current_transactions,
             'proof': proof,
             'previous_hash': previous_hash or self.hash(self.chain[-1]),
+            # Could also write self.last_block())
+            # 'previous_hash': previous_hash or self.hash(self.last_block()),
         }
 
         # Reset the current list of transactions
@@ -157,7 +163,7 @@ class Blockchain:
         """
         Simple Proof of Work Algorithm:
 
-         - Find a number p' such that hash(pp') contains leading 4 zeroes
+         - Find a number p' such that hash(pp') contains leading x zeroes
          - Where p is the previous proof, and p' is the new proof
 
         :param last_block: <dict> last Block
@@ -167,6 +173,7 @@ class Blockchain:
         last_proof = last_block['proof']
         last_hash = self.hash(last_block)
 
+        # nonce
         proof = 0
         while self.valid_proof(last_proof, proof, last_hash) is False:
             proof += 1
@@ -188,11 +195,11 @@ class Blockchain:
         guess = f'{last_proof}{proof}{last_hash}'.encode()
         guess_hash = hashlib.sha256(guess).hexdigest()
         # if guess_hash[:4] == "0000":
-        #     return
+        #     return True
         # else:
-        #     False
+        #     return False
         print(proof)
-        return guess_hash[:4] == "0000"
+        return guess_hash[:blockchain.difficulty] == (blockchain.difficulty * "0")
 
 
 ###############################################################
@@ -211,11 +218,16 @@ blockchain = Blockchain()
 ###############################################################
 
 
+###############################################################
+###############################################################
+##################### FLASK STUFF #############################
+###############################################################
+###############################################################
 @app.route('/mine', methods=['GET'])
 def mine():
     # We run the proof of work algorithm to get the next proof...
     last_block = blockchain.last_block
-    proof = blockchain.proof_of_work(last_block)
+    new_proof = blockchain.proof_of_work(last_block)
 
     # We must receive a reward for finding the proof.
     # The sender is "0" to signify that this node has mined a new coin.
@@ -227,7 +239,7 @@ def mine():
 
     # Forge the new Block by adding it to the chain
     previous_hash = blockchain.hash(last_block)
-    block = blockchain.new_block(proof, previous_hash)
+    block = blockchain.new_block(new_proof, previous_hash)
 
     response = {
         'message': "New Block Forged",
@@ -299,6 +311,11 @@ def consensus():
         }
 
     return jsonify(response), 200
+
+
+@app.route("/")
+def home():
+    return render_template("home.html")
 
 
 if __name__ == '__main__':
