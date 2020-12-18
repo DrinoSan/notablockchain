@@ -301,9 +301,9 @@ def full_chain():
     return jsonify(response), 200
 
 
-# @app.route('/nodes/register')
-# def ask_node_ip():
-#     return render_template("ask_node_ip.html")
+@app.route('/nodes/register')
+def ask_node_ip():
+    return render_template("ask_node_ip.html")
 
 
 @app.route('/nodes/register', methods=['POST'])
