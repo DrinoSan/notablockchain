@@ -252,7 +252,7 @@ def mine():
 
 
 @app.route('/transactions/new')
-def tx():
+def ask_tx():
     """
     Page in which the user submits: Sender, Recipient, Amount
     This data will be processed and added to the transactions which will be added to the next block
@@ -278,11 +278,6 @@ def new_transaction():
         "amount": amount,
     }
     print(values)
-    ###################################
-    # values = [sender, receiver, amount]
-
-    # values = request.get_json()
-    # print(request.get_json())
 
     # Check that the required fields are in the POST'ed data
     required = ['sender', 'recipient', 'amount']
@@ -306,9 +301,19 @@ def full_chain():
     return jsonify(response), 200
 
 
+# @app.route('/nodes/register')
+# def ask_node_ip():
+#     return render_template("ask_node_ip.html")
+
+
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
-    values = request.get_json()
+    # values = request.get_json()
+    ip = "http://" + request.form["ask_node_ip"] + ":5000"
+
+    values = {
+        "nodes": [ip]
+    }
 
     nodes = values.get('nodes')
     if nodes is None:
@@ -344,6 +349,7 @@ def consensus():
 
 @app.route("/")
 def home():
+    print(blockchain.nodes)
     return render_template("home.html")
 
 
