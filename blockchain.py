@@ -251,9 +251,38 @@ def mine():
     return jsonify(response), 200
 
 
+@app.route('/transactions/new')
+def tx():
+    """
+    Page in which the user submits: Sender, Recipient, Amount
+    This data will be processed and added to the transactions which will be added to the next block
+    """
+    return render_template("tx.html")
+
+
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
-    values = request.get_json()
+    """
+    Create a view that accepts a POST request(new_transaction)
+    Access the form elements of Request
+    We querry the data of the submitted data 
+    """
+    sender = request.form["Sender"]
+    receiver = request.form["Rec"]
+    amount = request.form["Amount"]
+    print(sender)
+
+    values = {
+        "sender": sender,
+        "recipient": receiver,
+        "amount": amount,
+    }
+    print(values)
+    ###################################
+    # values = [sender, receiver, amount]
+
+    # values = request.get_json()
+    # print(request.get_json())
 
     # Check that the required fields are in the POST'ed data
     required = ['sender', 'recipient', 'amount']
