@@ -3,7 +3,7 @@ import socket
 import select
 
 host = "0.0.0.0"
-port = 5000
+port = 5001
 
 HEADER_LENGTH = 10
 
@@ -17,34 +17,37 @@ server.listen()
 clients = []
 
 
-def broadcast(message):
-    for client in clients:
-        client.send(message)
+print(server.recv(1024))
 
 
-def handle(client):
-    while True:
-        try:
-            clients.remove(client)
-            client.close()
-            broadcast(f'Node left the Network!'.encode("ascii"))
-        except:
-            print("ERROR in Handle")
-            break
+# def broadcast(message):
+#     for client in clients:
+#         client.send(message)
 
 
-def receive():
-    while True:
-        client, address = server.accept()
-        print(f'Connected with {str(address)}')
-        client.send('Welcome to the Network'.encode("ascii"))
-        clients.append(client)
-
-        broadcast(f'Node joined Network!'.encode("ascii"))
-
-        thread = threading.Thread(target=handle, args=(client, ))
-        thread.start()
+# def handle(client):
+#     while True:
+#         try:
+#             clients.remove(client)
+#             client.close()
+#             broadcast(f'Node left the Network!'.encode("ascii"))
+#         except:
+#             print("ERROR in Handle")
+#             break
 
 
-print("Server is listening...")
-receive()
+# def receive():
+#     while True:
+#         client, address = server.accept()
+#         print(f'Connected with {str(address)}')
+#         client.send('Welcome to the Network'.encode("ascii"))
+#         clients.append(client)
+
+#         broadcast(f'Node joined Network!'.encode("ascii"))
+
+#         thread = threading.Thread(target=handle, args=(client, ))
+#         thread.start()
+
+
+# print("Server is listening...")
+# receive()
