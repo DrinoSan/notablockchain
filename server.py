@@ -1,7 +1,7 @@
 import socket
 
-IP = "127.0.0.1"
-PORT = 5432
+IP = "95.179.188.56"
+PORT = 5001
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((IP, PORT))
 server.listen()
@@ -9,3 +9,4 @@ server.listen()
 while True:
     client, address = server.accept()
     print(address)
+    client.send("TEXT")
