@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 import hashlib
 import json
 from time import time
@@ -7,19 +8,20 @@ from uuid import uuid4
 import requests
 from flask import Flask, jsonify, request, render_template
 
-
+import socket
 import threading
 
 
 class Blockchain:
 
     # Difficulty of PoW algo
-    difficulty = 4
+    difficulty = 5
 
-    def __init__(self):
+    def __init__(self, IP):
         self.current_transactions = []
         self.chain = []
         self.nodes = set()
+        self.ip = (IP + ":5002")
 
         # Create the genesis block
         self.new_block(previous_hash='Sandi420', proof=420)
@@ -201,8 +203,8 @@ class Blockchain:
         #     return True
         # else:
         #     return False
-        print(proof)
-        return guess_hash[:blockchain.difficulty] == (blockchain.difficulty * "0")
+        # print(proof)
+        return guess_hash[:Blockchain.difficulty] == (Blockchain.difficulty * "0")
 
     def mine(self):
         while True:
@@ -230,14 +232,14 @@ class Blockchain:
 ###############################################################
 ###############################################################
 ###############################################################
-# Instantiate the Node
-app = Flask(__name__)
 
 # Generate a globally unique address for this node
-node_identifier = str(uuid4()).replace('-', '')
+# node_identifier = str(uuid4()).replace('-', '')
 
 # Instantiate the Blockchain
-blockchain = Blockchain()
+IP = "95.179.188.56"
+PORT = 5002
+blockchain = Blockchain(IP)
 ###############################################################
 ###############################################################
 ###############################################################
@@ -248,6 +250,7 @@ blockchain = Blockchain()
 ##################### FLASK STUFF #############################
 ###############################################################
 ###############################################################
+app = Flask(__name__)
 # @app.route('/mine', methods=['GET'])
 # def mine():
 #     # We run the proof of work algorithm to get the next proof...
@@ -378,23 +381,27 @@ def home():
     return render_template("home.html")
 
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
+# if __name__ == '__main__':
+#     # Instantiate the Node
 
-    node_identifier = str(uuid4()).replace('-', '')
-    IP = "95.179.188.56"
-    PORT = 5002
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server.bind((IP, PORT))
-    server.listen()
+node_identifier = str(uuid4()).replace("-", "")
+parser = ArgumentParser()
 
-    # while True:
-    client, address = server.accept()
-    print(address)
-    client.send("TEXT".encode("utf-8"))
-    m = client.recv(1024).decode("utf-8")
-    print(m)
-    blockchain = Blockchain(IP)
-    t = threading.Thread(target=blockchain.mine)
-    t.start()
+parser.add_argument('-p', '--port', default=5000,
+                    type=int, help='port to listen on')
+args = parser.parse_args()
+port = args.port
+# server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+# server.bind((IP, PORT))
+# server.listen()
+
+# while True:
+# client, address = server.accept()
+# print(address)
+# client.send("TEXT".encode("utf-8"))
+# m = client.recv(1024).decode("utf-8")
+# print(m)
+t = threading.Thread(target=blockchain.mine)
+t.start()
+app.run(host='95.179.188.56', port=port, debug=True)
