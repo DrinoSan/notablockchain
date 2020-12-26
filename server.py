@@ -79,6 +79,9 @@ class Blockchain:
 
             print("New block has been forged with the index: {}".format
                   (self.chain[-1]["index"]))
+            print(15 * "-")
+            print("Content of forged Block: ")
+            print(json.dumps(self.chain[-1], indent=4))
             print("LEAVING MINE")
 
     def new_transaction(self, sender, recipient, amount):
