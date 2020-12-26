@@ -204,6 +204,28 @@ class Blockchain:
         print(proof)
         return guess_hash[:blockchain.difficulty] == (blockchain.difficulty * "0")
 
+    def mine(self):
+        while True:
+            print("Inside Mine")
+            last_block = self.last_block
+            new_proof = self.proof_of_work(last_block)
+
+            self.new_transaction(
+                sender="0",
+                recipient=node_identifier,
+                amount=1
+            )
+
+            previous_hash = self.hash(last_block)
+            self.new_block(new_proof, previous_hash)
+
+            print("New block has been forged with the index: {}".format
+                  (self.chain[-1]["index"]))
+            print(15 * "-")
+            print("Content of forged Block: ")
+            print(json.dumps(self.chain[-1], indent=4))
+            print("LEAVING MINE")
+
 
 ###############################################################
 ###############################################################
@@ -226,32 +248,32 @@ blockchain = Blockchain()
 ##################### FLASK STUFF #############################
 ###############################################################
 ###############################################################
-@app.route('/mine', methods=['GET'])
-def mine():
-    # We run the proof of work algorithm to get the next proof...
-    last_block = blockchain.last_block
-    new_proof = blockchain.proof_of_work(last_block)
+# @app.route('/mine', methods=['GET'])
+# def mine():
+#     # We run the proof of work algorithm to get the next proof...
+#     last_block = blockchain.last_block
+#     new_proof = blockchain.proof_of_work(last_block)
 
-    # We must receive a reward for finding the proof.
-    # The sender is "0" to signify that this node has mined a new coin.
-    blockchain.new_transaction(
-        sender="0",
-        recipient=node_identifier,
-        amount=1,
-    )
+#     # We must receive a reward for finding the proof.
+#     # The sender is "0" to signify that this node has mined a new coin.
+#     blockchain.new_transaction(
+#         sender="0",
+#         recipient=node_identifier,
+#         amount=1,
+#     )
 
-    # Forge the new Block by adding it to the chain
-    previous_hash = blockchain.hash(last_block)
-    block = blockchain.new_block(new_proof, previous_hash)
+#     # Forge the new Block by adding it to the chain
+#     previous_hash = blockchain.hash(last_block)
+#     block = blockchain.new_block(new_proof, previous_hash)
 
-    response = {
-        'message': "New Block Forged",
-        'index': block['index'],
-        'transactions': block['transactions'],
-        'proof': block['proof'],
-        'previous_hash': block['previous_hash'],
-    }
-    return jsonify(response), 200
+#     response = {
+#         'message': "New Block Forged",
+#         'index': block['index'],
+#         'transactions': block['transactions'],
+#         'proof': block['proof'],
+#         'previous_hash': block['previous_hash'],
+#     }
+#     return jsonify(response), 200
 
 
 @app.route('/transactions/new')
