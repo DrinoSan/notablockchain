@@ -8,6 +8,9 @@ import requests
 from flask import Flask, jsonify, request, render_template
 
 
+import threading
+
+
 class Blockchain:
 
     # Difficulty of PoW algo
@@ -356,10 +359,20 @@ def home():
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
-    parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5000,
-                        type=int, help='port to listen on')
-    args = parser.parse_args()
-    port = args.port
+    node_identifier = str(uuid4()).replace('-', '')
+    IP = "95.179.188.56"
+    PORT = 5002
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server.bind((IP, PORT))
+    server.listen()
 
-    app.run(host='0.0.0.0', port=port, debug=True)
+    # while True:
+    client, address = server.accept()
+    print(address)
+    client.send("TEXT".encode("utf-8"))
+    m = client.recv(1024).decode("utf-8")
+    print(m)
+    blockchain = Blockchain(IP)
+    t = threading.Thread(target=blockchain.mine)
+    t.start()
