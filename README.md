@@ -14,12 +14,12 @@ But.. Hope is the last to die :D
 ## Usage
 
 Follow the steps to become part of the chain
-'''bash
+```bash
 git clone file xyz
 
 cd into folder xyz
 python3 xyz.py
-'''
+```
 
 
 
