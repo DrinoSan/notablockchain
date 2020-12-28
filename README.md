@@ -14,7 +14,7 @@ But.. Hope is the last to die :D
 ## Usage
 
 Follow the steps to become part of the chain
-'''
+'''bash
 git clone file xyz
 
 cd into folder xyz
