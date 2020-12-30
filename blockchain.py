@@ -1,7 +1,8 @@
+
 from argparse import ArgumentParser
 import hashlib
 import json
-from time import time
+from time import time, sleep
 from urllib.parse import urlparse
 from uuid import uuid4
 
@@ -17,7 +18,7 @@ import threading
 class Blockchain:
 
     # Difficulty of PoW algo
-    difficulty = 5
+    difficulty = 4
 
     def __init__(self, IP):
         self.current_transactions = []
@@ -226,8 +227,8 @@ class Blockchain:
             print("New block has been forged with the index: {}".format
                   (self.chain[-1]["index"]))
             print(15 * "-")
-            print("Content of forged Block: ")
-            print(json.dumps(self.chain[-1], indent=4))
+            # print("Content of forged Block: ")
+            # print(json.dumps(self.chain[-1], indent=4))
             print("LEAVING MINE")
 
 
@@ -380,7 +381,6 @@ def consensus():
 
 @app.route("/")
 def home():
-    print(blockchain.nodes)
     return render_template("home.html")
 
 
@@ -405,6 +405,17 @@ port = args.port
 # client.send("TEXT".encode("utf-8"))
 # m = client.recv(1024).decode("utf-8")
 # print(m)
-t = threading.Thread(target=blockchain.mine)
-t.start()
-app.run(host='95.179.188.56', port=port, debug=True)
+
+
+def flask_thread(port):
+    """
+    Just helper function to execute the flask app in a seperate Thread
+    """
+    app.run(host='0.0.0.0', port=port, debug=False)
+
+
+t1 = threading.Thread(target=flask_thread, args=(port,))
+t1.start()
+sleep(3)
+t2 = threading.Thread(target=blockchain.mine)
+t2.start()
