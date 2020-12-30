@@ -411,7 +411,8 @@ def flask_thread(port):
     """
     Just helper function to execute the flask app in a seperate Thread
     """
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
+    app.run(host='0.0.0.0', port=port, debug=False, )
 
 
 t1 = threading.Thread(target=flask_thread, args=(port,))
