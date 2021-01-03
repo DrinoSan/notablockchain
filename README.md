@@ -1,4 +1,4 @@
-# Muffin Chain
+# Muffin
 
 This Chain is as good as your favourite Muffin. But currently, you can imagin it more as you sitting in front of the oven and watching your Muffins in the oven getting ready.
 And you are waiting for the right color of the Muffin while hoping for a good result. And deep down you really dont know if it will be good ;)
